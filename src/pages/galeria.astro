@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL;
+const paisajes = [
+  { src: 'montanas.svg', alt: 'Montañas al atardecer', caption: 'Montañas' },
+  { src: 'playa.svg', alt: 'Playa con palmeras', caption: 'Playa' },
+  { src: 'ciudad.svg', alt: 'Ciudad de noche con edificios iluminados', caption: 'Ciudad de noche' },
+];
+---
+<Layout title="Galería">
+  <h1>Galería</h1>
+  <p class="sub">Algunos de mis dibujos favoritos.</p>
+
+  <ul class="gallery">
+    {paisajes.map((p) => (
+      <li>
+        <figure class="card shot">
+          <img src={`${base}img/${p.src}`} alt={p.alt} width="400" height="260" loading="lazy" />
+          <figcaption>{p.caption}</figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+
+  <section class="row">
+    <figure class="card michi">
+      <img src={`${base}img/michi.svg`} alt="Dibujo de un gato gris llamado Michi" width="400" height="300" loading="lazy" />
+      <figcaption><strong>Figura 1.</strong> Michi, la mascota del grupo.</figcaption>
+    </figure>
+
+    <div class="card promo">
+      <a class="logo" href="https://www.apple.com/mx/" target="_blank" rel="noopener" aria-label="Visitar Apple">
+        <img src={`${base}img/web-logo.svg`} alt="" width="120" height="120" />
+      </a>
+      <p>Haz clic en el logo para visitar Apple y que te compres el <strong>iPhone 18</strong> 📱</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0; }
+  .sub { color: var(--muted); margin: 0.25rem 0 1.75rem; }
+  .gallery { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  figure { margin: 0; }
+  .shot { padding: 0.6rem; overflow: hidden; }
+  .shot img { border-radius: 14px; width: 100%; height: auto; transition: transform 0.35s; }
+  .shot:hover img { transform: scale(1.04); }
+  figcaption { padding: 0.6rem 0.3rem 0.1rem; font-weight: 600; color: var(--muted); }
+
+  .row { margin-top: 2rem; display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem; }
+  .michi { padding: 0.8rem; }
+  .michi img { border-radius: 14px; width: 100%; height: auto; }
+  .promo { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; }
+  .promo p { margin: 0; font-size: 1.1rem; }
+  .logo { border-radius: 50%; transition: transform 0.2s; }
+  .logo:hover { transform: rotate(-8deg) scale(1.08); }
+
+  @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+</style>

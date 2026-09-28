@@ -1,0 +1,124 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Página personal de Sarahi, estudiante del CBTIS.' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname.replace(base, '/').replace(/\/$/, '') || '/';
+const links = [
+  { href: '/', label: 'Inicio' },
+  { href: '/galeria', label: 'Galería' },
+  { href: '/contacto', label: 'Contacto' },
+];
+const url = (p: string) => base + p.replace(/^\//, '');
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={url('img/favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+    <title>{title} · Sarahi</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <nav class="nav">
+        <a class="brand" href={url('/')}>Sarahi<span>.</span></a>
+        <ul>
+          {links.map((l) => (
+            <li>
+              <a href={url(l.href)} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="footer">
+      <p>Actividad 10 · Hecho con <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> · {new Date().getFullYear()}</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --pink-50: #fff5f7;
+    --pink-100: #ffe4ea;
+    --pink-300: #f9a8bc;
+    --pink-500: #ec5b83;
+    --pink-700: #b8325a;
+    --ink: #2b1b24;
+    --muted: #6d5561;
+    --card: rgba(255, 255, 255, 0.72);
+    --border: rgba(236, 91, 131, 0.18);
+    --shadow: 0 10px 30px -12px rgba(184, 50, 90, 0.35);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #f7a1a8 0%, #fbc7d4 40%, #fdf0f3 100%) fixed;
+    line-height: 1.6;
+  }
+  h1, h2, h3, .brand { font-family: 'Fredoka', system-ui, sans-serif; line-height: 1.15; }
+  a { color: var(--pink-700); }
+  img { max-width: 100%; display: block; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 245, 247, 0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    max-width: 1000px; margin: 0 auto; padding: 0.8rem 1rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  }
+  .brand { font-size: 1.5rem; font-weight: 700; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--pink-500); }
+  .nav ul { list-style: none; display: flex; gap: 0.25rem; margin: 0; padding: 0; }
+  .nav ul a {
+    display: block; padding: 0.45rem 0.9rem; border-radius: 999px;
+    text-decoration: none; font-weight: 700; color: var(--muted);
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav ul a:hover { background: var(--pink-100); color: var(--pink-700); }
+  .nav ul a[aria-current='page'] { background: var(--pink-500); color: #fff; }
+
+  .container { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 1.75rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.3rem; border-radius: 999px;
+    background: var(--pink-500); color: #fff; font-weight: 700; text-decoration: none;
+    box-shadow: 0 6px 16px -6px rgba(236, 91, 131, 0.7);
+    transition: transform 0.15s, background 0.2s;
+  }
+  .btn:hover { transform: translateY(-2px); background: var(--pink-700); }
+  .btn.ghost { background: transparent; color: var(--pink-700); border: 2px solid var(--pink-300); box-shadow: none; }
+  .btn.ghost:hover { background: var(--pink-100); }
+
+  .footer { text-align: center; padding: 1.5rem 1rem; color: var(--muted); font-size: 0.9rem; }
+
+  @media (max-width: 520px) {
+    .brand { font-size: 1.25rem; }
+    .nav ul a { padding: 0.4rem 0.65rem; font-size: 0.92rem; }
+  }
+</style>
