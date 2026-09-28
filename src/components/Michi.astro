@@ -1,0 +1,139 @@
+---
+// Michi interactivo: los ojos siguen el cursor y maúlla al hacer clic
+---
+<div class="michi-wrap">
+  <button class="michi-btn" type="button" aria-label="Acariciar a Michi">
+    <svg class="michi-svg" viewBox="0 0 400 320" aria-hidden="true">
+      <defs>
+        <radialGradient id="mi-bg" cx=".5" cy=".4" r=".7">
+          <stop offset="0" stop-color="#fff4dc" />
+          <stop offset="1" stop-color="#f8d9a8" />
+        </radialGradient>
+      </defs>
+      <rect width="400" height="320" fill="url(#mi-bg)" />
+      <g opacity=".35" fill="#f59e0b">
+        <circle cx="50" cy="50" r="6" /><circle cx="350" cy="70" r="8" /><circle cx="330" cy="270" r="5" /><circle cx="60" cy="260" r="7" />
+      </g>
+      <path class="mi-tail" d="M290 290q70-10 60-80t-40-60" stroke="#565a6a" stroke-width="22" fill="none" stroke-linecap="round" />
+      <ellipse cx="200" cy="300" rx="110" ry="50" fill="#5b5f6e" />
+      <g class="mi-ear-l"><path d="M122 150 130 52l62 54z" fill="#5b5f6e" /><path d="M136 122l4-48 34 30z" fill="#f28fa6" /></g>
+      <g class="mi-ear-r"><path d="M278 150 270 52l-62 54z" fill="#5b5f6e" /><path d="M264 122l-4-48-34 30z" fill="#f28fa6" /></g>
+      <ellipse cx="200" cy="172" rx="96" ry="88" fill="#5b5f6e" />
+      <path d="M170 92q30-14 60 0-30 10-60 0z" fill="#4b4f5e" />
+      <ellipse cx="200" cy="205" rx="48" ry="34" fill="#6b7080" />
+      <g class="mi-eye">
+        <ellipse cx="160" cy="160" rx="21" ry="24" fill="#e9f5a1" />
+        <g class="mi-pupil"><ellipse cx="160" cy="160" rx="7" ry="18" fill="#1c1917" /><circle cx="164" cy="152" r="3.5" fill="#fff" /></g>
+      </g>
+      <g class="mi-eye">
+        <ellipse cx="240" cy="160" rx="21" ry="24" fill="#e9f5a1" />
+        <g class="mi-pupil"><ellipse cx="240" cy="160" rx="7" ry="18" fill="#1c1917" /><circle cx="244" cy="152" r="3.5" fill="#fff" /></g>
+      </g>
+      <ellipse cx="145" cy="200" rx="14" ry="8" fill="#f28fa6" opacity=".55" />
+      <ellipse cx="255" cy="200" rx="14" ry="8" fill="#f28fa6" opacity=".55" />
+      <path d="M189 190h22l-11 13z" fill="#f28fa6" />
+      <path d="M200 203q-8 14-20 6M200 203q8 14 20 6" stroke="#1c1917" stroke-width="3" fill="none" stroke-linecap="round" />
+      <g stroke="#f5f5f4" stroke-width="2.2" stroke-linecap="round" opacity=".9">
+        <path d="M158 198 90 186M158 206H86M158 214l-66 14M242 198l68-12M242 206h72M242 214l66 14" />
+      </g>
+      <path d="M130 250q70 26 140 0" stroke="#ec4f7f" stroke-width="10" fill="none" stroke-linecap="round" />
+      <circle cx="200" cy="266" r="11" fill="#fcd34d" stroke="#f59e0b" stroke-width="2" />
+      <path d="M194 268h12" stroke="#b45309" stroke-width="2" stroke-linecap="round" />
+    </svg>
+    <span class="bubble" aria-live="polite"></span>
+  </button>
+  <p class="michi-hint">👆 ¡Dale clic a Michi!</p>
+</div>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('.michi-wrap');
+  if (wrap) {
+    const btn = wrap.querySelector<HTMLButtonElement>('.michi-btn')!;
+    const svg = wrap.querySelector<SVGSVGElement>('.michi-svg')!;
+    const bubble = wrap.querySelector<HTMLElement>('.bubble')!;
+    const pupils = wrap.querySelectorAll<SVGGElement>('.mi-pupil');
+    const sounds = ['¡Miau! 😺', '¡Prrrr! 💕', '¿Comida? 🐟', 'Zzz... 😴', '¡Miau miau! 🐾', 'Más mimos 🥺'];
+    let count = 0;
+    let raf = 0;
+
+    addEventListener('pointermove', (e) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = svg.getBoundingClientRect();
+        const sx = 400 / r.width;
+        pupils.forEach((p, i) => {
+          const cx = r.left + ((i === 0 ? 160 : 240) / 400) * r.width;
+          const cy = r.top + (160 / 320) * r.height;
+          const a = Math.atan2(e.clientY - cy, e.clientX - cx);
+          const d = Math.min(9, Math.hypot(e.clientX - cx, e.clientY - cy) * sx / 20);
+          p.style.transform = `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d * 0.7}px)`;
+        });
+      });
+    });
+
+    btn.addEventListener('click', (e) => {
+      bubble.textContent = sounds[count++ % sounds.length];
+      bubble.classList.remove('show');
+      void bubble.offsetWidth;
+      bubble.classList.add('show');
+      btn.classList.remove('pet');
+      void btn.offsetWidth;
+      btn.classList.add('pet');
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX || r.left + r.width / 2) - r.left;
+      const y = (e.clientY || r.top + r.height / 2) - r.top;
+      for (let i = 0; i < 7; i++) {
+        const h = document.createElement('span');
+        h.className = 'heart';
+        h.textContent = ['💖', '💕', '✨', '🐾'][i % 4];
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        h.style.setProperty('--dx', (Math.random() - 0.5) * 160 + 'px');
+        h.style.setProperty('--r', (Math.random() - 0.5) * 60 + 'deg');
+        btn.appendChild(h);
+        setTimeout(() => h.remove(), 1200);
+      }
+    });
+  }
+</script>
+
+<style>
+  .michi-wrap { position: relative; }
+  .michi-btn {
+    position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer;
+    border-radius: 20px; overflow: visible;
+  }
+  .michi-svg { display: block; width: 100%; height: auto; border-radius: 20px; }
+  .michi-btn.pet .michi-svg { animation: squish 0.45s var(--ease); }
+  @keyframes squish { 30% { transform: scale(1.04, 0.95); } 60% { transform: scale(0.98, 1.03); } }
+  .mi-pupil { transition: transform 0.12s linear; }
+  .mi-ear-l { transform-origin: 150px 140px; }
+  .mi-ear-r { transform-origin: 250px 140px; }
+  .michi-btn:hover .mi-ear-l { animation: twitch 0.6s ease; }
+  .michi-btn:hover .mi-ear-r { animation: twitch 0.6s ease 0.1s reverse; }
+  @keyframes twitch { 40% { transform: rotate(-8deg); } 70% { transform: rotate(4deg); } }
+  .mi-tail { transform-origin: 290px 290px; animation: tail 3s ease-in-out infinite; }
+  @keyframes tail { 50% { transform: rotate(-10deg); } }
+  .bubble {
+    position: absolute; top: 6%; right: 6%; padding: 0.5rem 0.9rem; border-radius: 18px 18px 4px 18px;
+    background: var(--surface-solid); color: var(--ink); font: 700 1.1rem 'Fredoka', sans-serif;
+    box-shadow: var(--shadow); opacity: 0; transform: scale(0.5); pointer-events: none;
+  }
+  .bubble.show { animation: pop 1.8s var(--ease) forwards; }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.5) rotate(-8deg); }
+    15% { opacity: 1; transform: scale(1.1) rotate(3deg); }
+    25% { transform: scale(1) rotate(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  .michi-btn :global(.heart) {
+    position: absolute; font-size: 1.5rem; pointer-events: none; translate: -50% -50%;
+    animation: heart 1.1s var(--ease) forwards;
+  }
+  @keyframes heart {
+    from { opacity: 1; transform: translate(0, 0) scale(0.6); }
+    to { opacity: 0; transform: translate(var(--dx), -140px) scale(1.3) rotate(var(--r)); }
+  }
+  .michi-hint { text-align: center; margin: 0.6rem 0 0; font-weight: 700; color: var(--muted); font-size: 0.95rem; }
+</style>

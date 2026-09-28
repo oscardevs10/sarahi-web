@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL;
+---
+<Layout title="Página no encontrada">
+  <section class="nf card">
+    <div class="big" aria-hidden="true">4<span>😴</span>4</div>
+    <h1>Esta página se quedó dormida</h1>
+    <p>No encontramos lo que buscabas. Seguramente está tomando una siesta.</p>
+    <a class="btn" href={base}>← Volver al inicio</a>
+  </section>
+</Layout>
+
+<style>
+  .nf { max-width: 560px; margin: 3rem auto; text-align: center; padding: 3rem 2rem; }
+  .big { font: 700 clamp(5rem, 18vw, 8rem)/1 'Fredoka', sans-serif; color: var(--accent); display: flex; justify-content: center; align-items: center; gap: 0.1em; }
+  .big span { font-size: 0.8em; animation: tilt 3s ease-in-out infinite; }
+  @keyframes tilt { 50% { rotate: 15deg; } }
+  h1 { font-size: 1.8rem; margin: 1rem 0 0.4rem; }
+  p { color: var(--muted); margin: 0 0 1.6rem; }
+</style>
